@@ -8,8 +8,9 @@ function print_img(size){
   for(var i=0;i<size;i++){
     str+='<div>';
     str+='<img id=\"photo'+(i+1).toString()+'\" />';
-    str+='<div id=\"tag'+(i+1).toString()+'\">'+'</div>'
-    str+='</div';
+    str+='<div id=\"tag'+(i+1).toString()+'\">'+'</div>';
+    str+='<div id=\"link'+(i+1).toString()+'\">'+'</div>';
+    str+='</div>';
   }
   return str;
 }
@@ -77,7 +78,7 @@ function testAPI() {
     }
   });
 
-  var url = '/me/photos?fields=source, tags.fields(name)';
+  var url = '/me/photos?fields=source, tags.fields(name), link, place';
   FB.api(url, {limit:photo_size}, function(response){
     if(!response || response.error){
       alert('Error occured: '+response.error.message);
@@ -85,13 +86,13 @@ function testAPI() {
       //alert(response.data.length);
       var len=response.data.length;
       for (var i=0;i<len;i++){
+        //PHOTO SRC:
         var tmp=response.data[i].source;
-        //alert("p: "+tmp);
         var str='photo'+(i+1).toString();
         var photo=document.getElementById(str);
         photo.src=tmp;
         
-
+        //TAG:
         var tag_str='tag'+(i+1).toString();
         var tag_div=document.getElementById(tag_str);
         var tag_len=response.data[i].tags.data.length;
@@ -101,8 +102,21 @@ function testAPI() {
           //alert(tag);
           tag_list+=tag;
         }
-        tag_div.innerHTML=tag_list;
+
+        //LINK:
+        var link=response.data[i].link;
+        var link_str='link'+(i+1).toString();
+        var link_div=document.getElementById(link_str);
+        link_div.innerHTML=link;
+
+        //PLACE:
+        if(response.data[i].place!=null){
+          var place=response.data[i].place.name;
+          tag_list+=place;
+        }
         
+
+        tag_div.innerHTML=tag_list;
       }
     }
   });    
