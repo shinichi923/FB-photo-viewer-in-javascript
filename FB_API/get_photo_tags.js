@@ -1,14 +1,13 @@
 // this file can show the {photo_size} photos
 // <img/> is dynamically created
 
-var photo_size=7;
+var photo_size=100;
 
 function print_img(size){
   var str="";
   for(var i=0;i<size;i++){
     str+='<div>';
     str+='<img id=\"photo'+(i+1).toString()+'\" />';
-    str+='tag'+(i+1).toString();
     str+='<div id=\"tag'+(i+1).toString()+'\">'+'</div>'
     str+='</div';
   }
@@ -99,7 +98,7 @@ function testAPI() {
         var tag_list="";
         for(var j=0;j<tag_len;j++){
           var tag=response.data[i].tags.data[j].name;
-          alert(tag);
+          //alert(tag);
           tag_list+=tag;
         }
         tag_div.innerHTML=tag_list;
