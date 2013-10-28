@@ -8,6 +8,7 @@ function print_img(size){
   for(var i=0;i<size;i++){
     str+='<div>';
     str+='<img id=\"photo'+(i+1).toString()+'\" />';
+    str+='<div id=\"from'+(i+1).toString()+'\">'+'</div>';
     str+='<div id=\"tag'+(i+1).toString()+'\">'+'</div>';
     str+='<div id=\"link'+(i+1).toString()+'\">'+'</div>';
     str+='</div>';
@@ -78,7 +79,7 @@ function testAPI() {
     }
   });
 
-  var url = '/me/photos?fields=source, tags.fields(name), link, place';
+  var url = '/me/photos?fields=source, tags.fields(name), link, place, from';
   FB.api(url, {limit:photo_size}, function(response){
     if(!response || response.error){
       alert('Error occured: '+response.error.message);
@@ -86,6 +87,12 @@ function testAPI() {
       //alert(response.data.length);
       var len=response.data.length;
       for (var i=0;i<len;i++){
+        //PHOTO FROM:
+        var from=response.data[i].from.name;
+        var from_str='from'+(i+1).toString();
+        var from_div=document.getElementById(from_str);
+        from_div.innerHTML="from: "+from;
+
         //PHOTO SRC:
         var tmp=response.data[i].source;
         var str='photo'+(i+1).toString();
@@ -100,7 +107,9 @@ function testAPI() {
         for(var j=0;j<tag_len;j++){
           var tag=response.data[i].tags.data[j].name;
           //alert(tag);
-          tag_list+=tag;
+          if(tag!=from){
+            tag_list+=tag;
+          }
         }
 
         //LINK:
@@ -114,9 +123,13 @@ function testAPI() {
           var place=response.data[i].place.name;
           tag_list+=place;
         }
-        
 
         tag_div.innerHTML=tag_list;
+
+        
+        
+
+        
       }
     }
   });    
