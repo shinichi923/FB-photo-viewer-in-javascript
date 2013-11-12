@@ -36,8 +36,8 @@ function createDiv()
 
 window.fbAsyncInit = function() {
   FB.init({
-        appId      : '361824873952147', // App ID
-        channelUrl : '//people.cs.nctu.edu.tw/~stlin/channel.html', // Channel File
+        appId      : 'xxxx', // App ID
+        channelUrl : 'xxxx', // Channel File
         status     : true, // check login status
         cookie     : true, // enable cookies to allow the server to access the session
         xfbml      : true, // parse XFBML
@@ -48,6 +48,13 @@ window.fbAsyncInit = function() {
     if (response.status === 'connected') {
       createDiv();
       testAPI();
+
+      var access_token = response.authResponse.accessToken;
+      var img_url="xxxx";
+      var text="beautiful scene3";
+      post_photo(access_token,img_url, text);
+      
+      //get_photos();
     } else if (response.status === 'not_authorized') {
       facebookLogin();
     } else {
@@ -78,7 +85,18 @@ function testAPI() {
         email.innerHTML= user.email;
     }
   });
-
+}
+function post_photo(access_token, img_url, text){
+  FB.api("/me/photos", 'post', { access_token:access_token, message: text, url: img_url, privacy: {"value":"SELF"}}, function(response) {
+    if (!response || response.error) {
+      alert('Fail!');
+    }else{
+      alert('Success! Post ID: ' + response);
+    }
+ 
+  });
+}
+function get_photos(){
   var url = '/me/photos?fields=source, tags.fields(name), link, place, from';
   FB.api(url, {limit:photo_size}, function(response){
     if(!response || response.error){
