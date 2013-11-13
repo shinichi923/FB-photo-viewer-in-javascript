@@ -33,7 +33,7 @@ function createDiv()
         document.body.appendChild(divTag);
 
     }
-
+var access_token;
 window.fbAsyncInit = function() {
   FB.init({
         appId      : 'xxxx', // App ID
@@ -46,15 +46,17 @@ window.fbAsyncInit = function() {
 
   FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
-      createDiv();
+      
       testAPI();
 
-      var access_token = response.authResponse.accessToken;
-      var img_url="xxxx";
-      var text="beautiful scene3";
-      post_photo(access_token,img_url, text);
+      access_token = response.authResponse.accessToken;
       
-      //get_photos();
+      // var img_url="xxxx";
+      // var text="beautiful scene3";
+      // post_photo_from_url(img_url, text);
+      
+      createDiv();
+      get_photos();
     } else if (response.status === 'not_authorized') {
       facebookLogin();
     } else {
@@ -86,7 +88,7 @@ function testAPI() {
     }
   });
 }
-function post_photo(access_token, img_url, text){
+function post_photo_from_url(img_url, text){
   FB.api("/me/photos", 'post', { access_token:access_token, message: text, url: img_url, privacy: {"value":"SELF"}}, function(response) {
     if (!response || response.error) {
       alert('Fail!');
@@ -96,6 +98,23 @@ function post_photo(access_token, img_url, text){
  
   });
 }
+
+function fileUpload() {
+  FB.api('/me/albums', function(response) {
+    var album = response.data[0]; // Now, upload the image to first found album for easiness.
+    var action_url = 'https://graph.facebook.com/' + album.id + '/photos?access_token=' +  access_token + "&privacy={'value':'SELF'}";
+    alert(action_url);
+    var form = document.getElementById('upload-photo-form');
+    form.setAttribute('action', action_url);
+
+    // This does not work because of security reasons. Choose the local file manually.
+    // var file = document.getElementById('upload-photo-form-file');
+    // file.setAttribute('value', "/Users/nseo/Desktop/test_title_03.gif")
+
+    form.submit();
+  });
+}
+
 function get_photos(){
   var url = '/me/photos?fields=source, tags.fields(name), link, place, from';
   FB.api(url, {limit:photo_size}, function(response){
